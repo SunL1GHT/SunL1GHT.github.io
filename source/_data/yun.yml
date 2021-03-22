@@ -5,7 +5,7 @@ favicon: ../images/favicon.ico
 # Sidebar Avatar
 avatar:
   enable: true
-  url: ../images/slogan.png
+  url: ../images/penguin2-h.jpg
   # If true, the avatar would be dispalyed in circle.
   rounded: true
   # The value of opacity should be choose from 0 to 1 to set the opacity of the avatar.
@@ -26,3 +26,39 @@ wordcount:
 wordcloud:
   enable: true
   height: 350
+
+# UI
+banner:
+  enable: true
+  title: 海港浪声
+  src: /js/ui/banner.js
+  border: true
+  cloud:
+    enable: true
+    color: "white"
+  go_down:
+    enable: true
+    icon: icon-arrow-down-s-line
+
+# Social Links.
+social:
+  - name: RSS
+    link: /atom.xml
+    icon: icon-rss-line
+    color: orange
+  - name: GitHub
+    link: https://github.com/SunL1GHT
+    icon: icon-github-line
+    color: "#6e5494"
+  - name: 微博
+    link: https://weibo.com/3182176652
+    icon: icon-weibo-line
+    color: "#E6162D"
+  - name: 豆瓣
+    link: https://www.douban.com/people/132851686/
+    icon: icon-douban-line
+    color: "#007722"
+  - name: 哔哩哔哩
+    link: https://space.bilibili.com/66248455
+    icon: icon-bilibili-line
+    color: "#FF8EB3"
