@@ -116,3 +116,9 @@ say:
 
 # Comments
 # See config file in /data/_comments.yml.
+
+# 默哀
+mourn:
+  enable: true
+  days:
+    - "5-12"
