@@ -16,6 +16,16 @@ avatar:
     emoji: 😊
     message: 永远相信美好的事情即将发生
 
+# Posts / Categories / Tags in sidebar.
+sidebar:
+  src: /js/sidebar.js
+  bg_image: https://cdn.jsdelivr.net/gh/YunYouJun/cdn@master/img/bg/alpha-stars-timing-1.webp
+  # dark_bg_image: https://cdn.jsdelivr.net/gh/YunYouJun/cdn@master/img/bg/dark-alpha-stars-timing-1.webp
+  bg_position: bottom 1rem center
+  tagcloud:
+    enable: true
+    amount: 20
+
 # Post wordcount
 # https://github.com/willin/hexo-wordcount
 wordcount:
@@ -62,3 +72,24 @@ social:
     link: https://space.bilibili.com/66248455
     icon: icon-bilibili-line
     color: "#FF8EB3"
+
+menu:
+  home:
+    path: /
+    icon: icon-home-4-line
+  list:
+    - type: archives
+      path: /archives/
+      icon: icon-archive-line
+    - type: categories
+      path: /categories/
+      icon: icon-folder-2-line
+    - type: tags
+      path: /tags/
+      icon: icon-price-tag-3-line
+
+tags:
+  随笔: "#4fc08d"
+
+categories:
+  个人: dimgray
