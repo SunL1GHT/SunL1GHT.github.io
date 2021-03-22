@@ -1,3 +1,24 @@
 mode: auto
 
-favicon: /images/favicon.ico
+favicon: ../images/favicon.ico
+
+# Sidebar Avatar
+avatar:
+  enable: true
+  url: ../images/slogan.png
+  # If true, the avatar would be dispalyed in circle.
+  rounded: true
+  # The value of opacity should be choose from 0 to 1 to set the opacity of the avatar.
+  opacity: 1
+  mickey_mouse: false
+  status:
+    enable: true
+    emoji: 😊
+    message: 永远相信美好的事情即将发生
+
+# Post wordcount
+# https://github.com/willin/hexo-wordcount
+wordcount:
+  enable: true
+  count: true
+  time: true
