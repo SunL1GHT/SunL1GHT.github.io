@@ -22,3 +22,7 @@ wordcount:
   enable: true
   count: true
   time: true
+
+wordcloud:
+  enable: true
+  height: 350
