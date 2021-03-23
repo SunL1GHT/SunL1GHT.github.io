@@ -89,8 +89,8 @@ menu:
       icon: icon-price-tag-3-line
   custom:
     title: 相册
-    path: https://yun.yunyoujun.cn
-    icon: icon-settings-line
+    path: /albums/
+    icon: gallery-line
 
 tags:
   随笔: "#4fc08d"
