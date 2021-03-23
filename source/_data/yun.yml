@@ -2,6 +2,19 @@ mode: auto
 
 favicon: ../images/favicon.ico
 
+# Theme color for customize
+# Notice: color value must in double quotes: "#000000"
+colors:
+  primary: "#0078E7"
+  # primary: "#6200ee"
+  bg: "#f5f5f5"
+  selection_bg: "#fcd337"
+  tag_start_color: "#999999"
+  tag_end_color: "#0078E7"
+  dark:
+    block: "#1b1f2e"
+    # block: "#17202A"
+
 # Sidebar Avatar
 avatar:
   enable: true
