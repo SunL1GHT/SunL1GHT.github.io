@@ -84,13 +84,13 @@ menu:
     - type: categories
       path: /categories/
       icon: icon-folder-2-line
-    - type: 相册
+    - type: albums
       path: /albums/
-      icon: gellery-line
+      icon: icon-gellery-line
   custom:
-    title: 幻灯片演示
+    title: slides
     path: /slides/
-    icon: heart-line
+    icon: icon-heart-line
 
 pages:
 
