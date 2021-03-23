@@ -84,12 +84,12 @@ menu:
     - type: categories
       path: /categories/
       icon: icon-folder-2-line
-    - type: tags
-      path: /tags/
-      icon: icon-price-tag-3-line
+    - type: 相册
+      path: /albums/
+      icon: gellery-line
   custom:
-    title: 相册
-    path: /albums/
+    title: 幻灯片演示
+    path: /slides/
     icon: heart-line
 
 pages:
