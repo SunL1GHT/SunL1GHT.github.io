@@ -48,7 +48,7 @@ banner:
     color: "white"
   go_down:
     enable: true
-    icon: open-arm-line
+    icon: icon-open-arm-line
 
 # Social Links.
 social:
@@ -131,3 +131,21 @@ mourn:
 
 albums:
   enable: true
+
+# 光标
+cursor:
+  enable: true
+  default: https://cdn.jsdelivr.net/gh/YunYouJun/cdn/css/md-cursors/pointer.cur
+  pointer: https://cdn.jsdelivr.net/gh/YunYouJun/cdn/css/md-cursors/link.cur
+  text: https://cdn.jsdelivr.net/gh/YunYouJun/cdn/css/md-cursors/text.cur
+
+# 烟花
+fireworks:
+  enable: false
+  src: /js/ui/fireworks.js
+  colors:
+    - "102, 167, 221"
+    - "62, 131, 225"
+    - "33, 78, 194"
+    # - '3, 28, 95'
+    # - '0, 8, 55'
