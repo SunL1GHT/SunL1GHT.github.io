@@ -24,7 +24,7 @@ slide:
 ---
 
 ## 内窥镜阶段计划书
-<i class="ri-file-word-line" style="font-size: 6rem;"></i>
+<i class="ri-file-word-line"></i>
 
 ~~
 
