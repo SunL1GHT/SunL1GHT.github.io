@@ -90,7 +90,9 @@ menu:
   custom:
     title: 相册
     path: /albums/
-    icon: gallery-line
+    icon: heart-line
+
+pages:
 
 tags:
   随笔: "#4fc08d"
