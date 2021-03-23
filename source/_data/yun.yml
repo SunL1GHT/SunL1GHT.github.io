@@ -86,7 +86,7 @@ menu:
       icon: icon-folder-2-line
     - type: albums
       path: /albums/
-      icon: icon-gellery-line
+      icon: icon-gallery-line
   custom:
     title: slides
     path: /slides/
