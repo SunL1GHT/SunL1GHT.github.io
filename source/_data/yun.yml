@@ -9,7 +9,7 @@ colors:
   # primary: "#6200ee"
   bg: "#f5f5f5"
   # selection_bg: "#fcd337"
-  selection_bg: "#004576"
+  selection_bg: "#2EA9DF"
   tag_start_color: "#999999"
   tag_end_color: "#0078E7"
   dark:
