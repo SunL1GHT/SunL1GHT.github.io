@@ -62,7 +62,7 @@ banner:
     color: "white"
   go_down:
     enable: true
-    icon: <i class="ri-anchor-fill"></i>
+    icon: icon-anchor-fill
     # icon: icon-open-arm-line
 
 # Social Links.
