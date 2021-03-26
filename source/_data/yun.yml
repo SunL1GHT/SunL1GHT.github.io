@@ -56,14 +56,13 @@ banner:
   enable: true
   title: 海港浪声
   src: /js/ui/banner.js
-  border: true
+  border: false
   cloud:
     enable: true
     color: "white"
   go_down:
     enable: true
-    icon: icon-anchor-fill
-    # icon: icon-open-arm-line
+    icon: icon-arrow-down-s-line
 
 # Social Links.
 social:
