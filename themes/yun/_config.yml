@@ -295,6 +295,13 @@ cdn:
 # cdn for third-party library (alternative include)
 # please see in _vendors.yml
 vendors:
+katex:
+  js: https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js
+  css: https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css
+  auto_render: https://cdn.jsdelivr.net/npm/katex@latest/dist/contrib/auto-render.min.js
+  copy_tex:
+    css: https://cdn.jsdelivr.net/npm/katex@latest/dist/contrib/copy-tex.min.css
+    js: https://cdn.jsdelivr.net/npm/katex@latest/dist/contrib/copy-tex.min.js
 
 # UI
 banner:
