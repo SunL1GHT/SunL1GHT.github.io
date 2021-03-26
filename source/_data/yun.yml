@@ -59,7 +59,7 @@ banner:
   border: false
   cloud:
     enable: true
-    color: "white"
+    color: "blue"
   go_down:
     enable: true
     icon: icon-arrow-down-s-line
