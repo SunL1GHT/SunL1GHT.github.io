@@ -117,7 +117,7 @@ categories:
 # say something
 # https://say.elpsy.cn
 say:
-  enable: false
+  enable: true
   # api: https://say.elpsy.cn/sentences.json
   api: /data/sentences.json
   # api: https://cdn.jsdelivr.net/gh/ElpsyCN/say@gh-pages/sentences.json
