@@ -11,7 +11,7 @@ photos:
     src: https://cdn.jsdelivr.net/gh/SunL1GHT/ImagePicGo@main/img/20210328184032.jpg
     desc: 无
   - caption: 广场欢笑
-    src: https://cdn.jsdelivr.net/gh/SunL1GHT/ImagePicGo@main/img/20210328184035.jpg
+    src: https://cdn.jsdelivr.net/gh/SunL1GHT/ImagePicGo@main/img/20210328184644.jpg
     desc: 无
   - caption: 金秋岁月
     src: https://cdn.jsdelivr.net/gh/SunL1GHT/ImagePicGo@main/img/20210328190308.jpg
