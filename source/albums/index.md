@@ -12,4 +12,8 @@ albums:
     url: /albums/gucun.html
     cover: https://cdn.jsdelivr.net/gh/SunL1GHT/ImagePicGo@main/img/20210315131619.jpg
     desc: 顾村公园放风筝
+  - caption: 中华艺术宫
+    url: /albums/ChinaArtsMuseum.html
+    cover: https://cdn.jsdelivr.net/gh/SunL1GHT/ImagePicGo@main/img/20210328184644.jpg
+    desc: 世博中国馆艺术展半日游
 ---
