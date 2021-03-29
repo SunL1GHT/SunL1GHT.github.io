@@ -33,7 +33,8 @@ avatar:
 # Posts / Categories / Tags in sidebar.
 sidebar:
   src: /js/sidebar.js
-  bg_image: https://cdn.jsdelivr.net/gh/YunYouJun/cdn@master/img/bg/alpha-stars-timing-1.webp
+  # bg_image: https://cdn.jsdelivr.net/gh/YunYouJun/cdn@master/img/bg/alpha-stars-timing-1.webp
+  bg_image: https://cdn.jsdelivr.net/gh/SunL1GHT/ImagePicGo@main/img/20210328184644.jpg
   # dark_bg_image: https://cdn.jsdelivr.net/gh/YunYouJun/cdn@master/img/bg/dark-alpha-stars-timing-1.webp
   bg_position: bottom 1rem center
   tagcloud:
