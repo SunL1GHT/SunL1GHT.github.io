@@ -33,13 +33,20 @@ avatar:
 # Posts / Categories / Tags in sidebar.
 sidebar:
   src: /js/sidebar.js
-  # bg_image: https://cdn.jsdelivr.net/gh/YunYouJun/cdn@master/img/bg/alpha-stars-timing-1.webp
-  bg_image: https://cdn.jsdelivr.net/gh/SunL1GHT/ImagePicGo@main/img/20210328184644.jpg
+  bg_image: https://cdn.jsdelivr.net/gh/YunYouJun/cdn@master/img/bg/alpha-stars-timing-1.webp
+  # bg_image: https://cdn.jsdelivr.net/gh/SunL1GHT/ImagePicGo@main/img/20210328184644.jpg
   # dark_bg_image: https://cdn.jsdelivr.net/gh/YunYouJun/cdn@master/img/bg/dark-alpha-stars-timing-1.webp
   bg_position: bottom 1rem center
   tagcloud:
     enable: true
     amount: 20
+
+bg_image:
+  enable: true
+  url: https://cdn.jsdelivr.net/gh/SunL1GHT/ImagePicGo@main/img/20210328184644.jpg # recomend image related to your mode
+  dark: https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/bg/galaxy.jpg
+  blur: 13px
+  opacity: 1
 
 # Post wordcount
 # https://github.com/willin/hexo-wordcount
