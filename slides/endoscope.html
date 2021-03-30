@@ -1,0 +1,129 @@
+<!DOCTYPE html><html lang="en"><head><!-- hexo injector head_begin start --><link href="https://cdn.jsdelivr.net/npm/hexo-widget-tree@0.1.1/css/index.css" rel="stylesheet"/><!-- hexo injector head_begin end --><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="Gary Gu"><meta name="copyright" content="Gary Gu"><meta name="generator" content="Hexo 5.4.0"><meta name="theme" content="hexo-theme-yun"><title>endoscope | 人生自留地</title><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/theme/white.css"><link rel="alternate" href="/atom.xml" title="人生自留地" type="application/atom+xml">
+</head><body><div class="reveal"><div class="slides"><section data-markdown data-separator="---" data-separator-vertical="~~" data-separator-notes="^Note:"><script type="text/template">
+# 一次性内窥镜的主机系统设计
+
+---
+
+## 功能需求
+
+~~
+
+1. 白平衡
+2. 色彩增强（红色血管、出血点颜色增强）
+3. 结构增强（显示细微轮廓）
+4. 录像/拍照
+5. 菜单：语言、存储格式、患者信息、增强功能设定、日期时间、视频输出格式、U盘格式化
+6. 照明亮度调节功能（控制镜头端LED亮度）
+7. 上下左右控制
+
+---
+
+## 内窥镜阶段计划书
+<i class="ri-file-word-line"></i>
+
+~~
+
+### 第一阶段
+
+~~
+
+图像处理
+
+- 图像增强：
+  - 白平衡，
+  - 颜色增强，
+  - 结构增强
+
+~~
+
+界面设计
+
+- 显示日期时间
+- 调用摄像头/读取视频
+- 视频输出格式选择
+- 图像显示
+- 图像增强若干功能按键
+- U盘格式化按键
+- 界面显示语言切换（中/英）
+
+~~
+
+### 第二阶段
+
+~~
+
+软件——视频图像的清晰化
+
+- 引入神经网络中的超分辨率技术，完善结构增强功能
+
+~~
+
+目前研究进展
+
+Topaz实验室的**Gigapixel AI**软件
+
+它利用一种专有的**插值算法**，对图像做分析、识别其细节和结构，最后将额外的“信息”填充到图像中。
+
+- 最近邻 (Nearest Neighbor)方法
+
+- 双线性插值 (Bilinear Interpolation)方法
+
+- 双三次插值 (Bicubic Interpolation)
+
+~~
+
+硬件
+
+- 基于树莓派的软件控制，实现独立按钮控制
+
+- 三档控制LED的亮度
+
+- 多端通信及数据传输——显示器（HDMI）、PC端（TCP/IP）
+
+~~
+
+云端
+
+一、GPU与CPU
+
+CPU是处理基本算数运算的单元：它处理的数据是数：整型、浮点型、bool等等；
+
+GPU是处理图形运算的单元：它处理的数据是图形的数据矩阵；
+ 
+GPU的输入是一个和多个图形，输出是对一个和多个图形的处理结果：图形合成、色值反转等等；
+
+本质上是矩阵运算和内置的图片解码算法。
+ 
+编码图片、位图、图形操作、图片解码、矩阵操作。
+
+openGL是GPU功能的调用规范。
+ 
+~~
+
+二、openGL是一组调用GPU功能的API规范。
+ 
+OpenGL是Khronos Group开发维护的一个规范，它主要为我们定义了用来操作图形和图片的一系列函数的API，需要注意的是OpenGL本身并非API。
+
+GPU的硬件开发商则需要提供满足OpenGL规范的实现，这些实现通常被称为“驱动”，它们负责将OpenGL定义的API命令翻译为GPU指令。
+
+然，如果硬件开发商的某款显卡无法在硬件上支持OpenGL所定义的所有功能，那么硬件开发商就必须通过软渲染的方式提供这种功能。
+
+综上，OpenGL并非一个能够直接安装的库或包，它只是一个规范。我们只需要安装显卡的驱动即可，因为显卡驱动中就包括了对OpenGL规范的实现。
+
+
+---
+
+## 谢谢
+
+<i class="ri-emotion-line"></i>
+
+敬请老师和各位同学指正</script></section></div></div><script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script><script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script><script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script><script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.0.2/plugin/highlight/monokai.css"><script>document.addEventListener("DOMContentLoaded", function() {
+  const revealConfig = {"history":true,"mouseWheel":true}
+  revealConfig.plugins = [ RevealMarkdown, RevealNotes, RevealHighlight ]
+  Reveal.initialize(revealConfig);
+})</script><!-- hexo injector body_end start --><script src="https://cdn.jsdelivr.net/npm/hexo-widget-tree@0.1.1/js/index.js"></script><div id="widget-tree">
+      <ul><li class="tree-list-item"><i class="toggle-post-icon gg-folder-add"></i><a class="tree-list-link" href="/categories/%E5%AE%9E%E9%AA%8C%E5%AE%A4/">实验室</a><ul class="tree-list-children"><li class="tree-list-item"><a class="tree-list-post-link" href="/2021/03/28/Qt%E5%AD%A6%E4%B9%A0%E5%AE%9E%E8%B7%B5/" title="Qt学习实践"><i class="post-icon gg-file-document"></i>Qt学习实践</a></li><li class="tree-list-item"><a class="tree-list-post-link" href="/2021/03/23/%E4%B8%80%E6%AC%A1%E6%80%A7%E5%86%85%E7%AA%A5%E9%95%9C%E7%9A%84%E4%B8%BB%E6%9C%BA%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" title="一次性内窥镜的主机系统设计"><i class="post-icon gg-file-document"></i>一次性内窥镜的主机系统设计</a></li><li class="tree-list-item"><a class="tree-list-post-link" href="/2021/03/22/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" title="深度学习"><i class="post-icon gg-file-document"></i>深度学习</a></li><li class="tree-list-item"><a class="tree-list-post-link" href="/2021/03/27/%E7%9F%A9%E9%98%B5%E6%B1%82%E5%AF%BC/" title="矩阵求导"><i class="post-icon gg-file-document"></i>矩阵求导</a></li></ul></li><li class="tree-list-item"><i class="toggle-post-icon gg-folder-add"></i><a class="tree-list-link" href="/categories/%E5%B7%A5%E4%BD%9C%E5%AE%9E%E8%B7%B5/">工作实践</a><ul class="tree-list-children"><li class="tree-list-item"><a class="tree-list-post-link" href="/2021/03/23/Cplusplus/" title="C++实践记录"><i class="post-icon gg-file-document"></i>C++实践记录</a></li></ul></li><li class="tree-list-item"><i class="toggle-post-icon gg-folder-add"></i><a class="tree-list-link" href="/categories/%E7%94%9F%E6%B4%BB%E5%B0%8F%E7%BB%93/">生活小结</a><ul class="tree-list-children"><li class="tree-list-item"><a class="tree-list-post-link" href="/2021/03/13/21march/" title="三月纪要"><i class="post-icon gg-file-document"></i>三月纪要</a></li></ul></li></ul>
+        <div id="widget-tree-button">
+          <i class="gg-chevron-right"></i>
+        </div>
+      </div><!-- hexo injector body_end end --></body></html>

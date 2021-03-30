@@ -1,0 +1,260 @@
+<!DOCTYPE html><html lang="en"><head><!-- hexo injector head_begin start --><link href="https://cdn.jsdelivr.net/npm/hexo-widget-tree@0.1.1/css/index.css" rel="stylesheet"/><!-- hexo injector head_begin end --><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="Gary Gu"><meta name="copyright" content="Gary Gu"><meta name="generator" content="Hexo 5.4.0"><meta name="theme" content="hexo-theme-yun"><title>一次性内窥镜的主机系统设计 | 人生自留地</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/star-markdown-css@0.1.24/dist/yun/yun-markdown.min.css"><script src="//at.alicdn.com/t/font_1140697_ed8vp4atwoj.js" async></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>document.addEventListener("DOMContentLoaded", () => {
+  [".post-card",".post-content img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+});
+</script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/contrib/copy-tex.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@latest/dist/contrib/copy-tex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@latest/dist/contrib/auto-render.min.js"></script><script>document.addEventListener("DOMContentLoaded", function() {
+  renderMathInElement(document.body, {
+    delimiters: [
+      {left: "$$", right: "$$", display: true},
+      {left: "$", right: "$", display: false},
+      {left: "\\(", right: "\\)", display: false},
+      {left: "\\[", right: "\\]", display: true}
+    ]
+  });
+});</script><link rel="shortcut icon" type="image/svg+xml" href="/../images/favicon.ico"><link rel="mask-icon" href="/../images/favicon.ico" color="#0078E7"><link rel="alternate icon" href="/yun.ico"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="preload" href="/js/utils.js" as="script"><link rel="preload" href="/js/hexo-theme-yun.js" as="script"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><script id="yun-config">
+    const Yun = window.Yun || {};
+    window.CONFIG = {"hostname":"sunl1ght.github.io","root":"/","title":"海港浪声","version":"1.5.2","mode":"auto","copycode":true,"page":{"isPost":true},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}.","hits":"${hits} results found","hits_time":"${hits} results found in ${time} ms"},"anonymous_image":"https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/avatar/none.jpg","say":{"api":"/data/sentences.json"}};
+  </script><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script src="/js/utils.js"></script><script src="/js/hexo-theme-yun.js"></script><link rel="alternate" href="/atom.xml" title="人生自留地" type="application/atom+xml"><meta name="description" content="功能需求 白平衡 色彩增强（红色血管、出血点颜色增强） 结构增强（显示细微轮廓） 录像&#x2F;拍照 菜单：语言、存储格式、患者信息、增强功能设定、日期时间、视频输出格式、U盘格式化 照明亮度调节功能（控制镜头端LED亮度） 上下左右控制  内窥镜阶段计划书第一阶段图像处理  图像增强： 白平衡， 颜色增强， 结构增强    界面设计  显示日期时间 调用摄像头&#x2F;读取视频 视频输出格式选择 图像显示 图像">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一次性内窥镜的主机系统设计">
+<meta property="og:url" content="http://sunl1ght.github.io/2021/03/23/%E4%B8%80%E6%AC%A1%E6%80%A7%E5%86%85%E7%AA%A5%E9%95%9C%E7%9A%84%E4%B8%BB%E6%9C%BA%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/index.html">
+<meta property="og:site_name" content="人生自留地">
+<meta property="og:description" content="功能需求 白平衡 色彩增强（红色血管、出血点颜色增强） 结构增强（显示细微轮廓） 录像&#x2F;拍照 菜单：语言、存储格式、患者信息、增强功能设定、日期时间、视频输出格式、U盘格式化 照明亮度调节功能（控制镜头端LED亮度） 上下左右控制  内窥镜阶段计划书第一阶段图像处理  图像增强： 白平衡， 颜色增强， 结构增强    界面设计  显示日期时间 调用摄像头&#x2F;读取视频 视频输出格式选择 图像显示 图像">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/SunL1GHT/ImagePicGo@main/img/20210326185216.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/SunL1GHT/ImagePicGo@main/img/20210326185317.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/SunL1GHT/ImagePicGo@main/img/20210326184457.jpg">
+<meta property="og:image" content="https://bbs.cvmart.net/uploads/images/201909/10/3/ExYpimih7z.png?imageView2/2/w/1240/h/0">
+<meta property="og:image" content="https://bbs.cvmart.net/uploads/images/201909/10/3/TqII1h1Uyi.png?imageView2/2/w/1240/h/0">
+<meta property="og:image" content="https://bbs.cvmart.net/uploads/images/201909/10/3/e7mc2ZJwJ7.png?imageView2/2/w/1240/h/0">
+<meta property="og:image" content="https://bbs.cvmart.net/uploads/images/201909/10/3/lcTwlTetVQ.png?imageView2/2/w/1240/h/0">
+<meta property="og:image" content="https://bbs.cvmart.net/uploads/images/201909/10/3/L6AKms1aX0.png?imageView2/2/w/1240/h/0">
+<meta property="og:image" content="https://img2020.cnblogs.com/blog/2215171/202103/2215171-20210301091709616-1699615147.png">
+<meta property="article:published_time" content="2021-03-23T18:56:42.000Z">
+<meta property="article:modified_time" content="2021-03-30T06:31:27.220Z">
+<meta property="article:author" content="Gary Gu">
+<meta property="article:tag" content="图像增强">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/SunL1GHT/ImagePicGo@main/img/20210326185216.jpg"><script src="/js/ui/mode.js"></script></head><body><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="Table of Contents"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-ordered"></use></svg></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="Overview"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-passport-line"></use></svg></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info fix-top"><a class="site-author-avatar" href="/about/" title="Gary Gu"><img width="96" loading="lazy" src="/../images/penguin2-h.jpg" alt="Gary Gu"><span class="site-author-status" title="永远相信美好的事情即将发生">😊</span></a><div class="site-author-name"><a href="/about/">Gary Gu</a></div><a class="site-name" href="/about/site.html">人生自留地</a><sub class="site-subtitle"></sub><div class="site-desciption"></div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="Home"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item"><a href="/archives/" title="Archives"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">6</span></a></div><div class="site-state-item"><a href="/categories/" title="Categories"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-2-line"></use></svg></span><span class="site-state-item-count">3</span></a></div><div class="site-state-item"><a href="/tags/" title="Tags"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="site-state-item-count">7</span></a></div><a class="site-state-item hty-icon-button" href="/albums/" title="albums"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-gallery-line"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="/atom.xml" title="RSS" target="_blank" style="color:orange"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-rss-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/SunL1GHT" title="GitHub" target="_blank" style="color:#6e5494"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-github-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://weibo.com/3182176652" title="微博" target="_blank" style="color:#E6162D"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-weibo-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://www.douban.com/people/132851686/" title="豆瓣" target="_blank" style="color:#007722"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-douban-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://space.bilibili.com/66248455" title="哔哩哔哩" target="_blank" style="color:#FF8EB3"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-bilibili-line"></use></svg></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-contrast-2-line"></use></svg></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%9F%E8%83%BD%E9%9C%80%E6%B1%82"><span class="toc-number">1.</span> <span class="toc-text">功能需求</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E7%AA%A5%E9%95%9C%E9%98%B6%E6%AE%B5%E8%AE%A1%E5%88%92%E4%B9%A6"><span class="toc-number">2.</span> <span class="toc-text">内窥镜阶段计划书</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E9%98%B6%E6%AE%B5"><span class="toc-number">2.1.</span> <span class="toc-text">第一阶段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E9%98%B6%E6%AE%B5"><span class="toc-number">2.2.</span> <span class="toc-text">第二阶段</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%99%85%E5%AE%9E%E7%8E%B0%E2%80%94%E2%80%94%E5%9B%BE%E5%83%8F%E5%A2%9E%E5%BC%BA"><span class="toc-number">3.</span> <span class="toc-text">实际实现——图像增强</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%99%85%E5%AE%9E%E7%8E%B0%E2%80%94%E2%80%94%E8%B6%85%E5%88%86%E8%BE%A8%E7%8E%87"><span class="toc-number">4.</span> <span class="toc-text">实际实现——超分辨率</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%99%85%E5%AE%9E%E7%8E%B0%E2%80%94%E2%80%94Qt%E7%95%8C%E9%9D%A2"><span class="toc-number">5.</span> <span class="toc-text">实际实现——Qt界面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%99%85%E5%AE%9E%E7%8E%B0%E2%80%94%E2%80%94%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%BF%9B%E8%A1%8C%E8%AE%AD%E7%BB%83%E9%83%A8%E7%BD%B2"><span class="toc-number">6.</span> <span class="toc-text">实际实现——云服务器进行训练部署</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Docker"><span class="toc-number">6.1.</span> <span class="toc-text">Docker</span></a></li></ol></li></ol></div></div></div><div class="tag-cloud"><div class="tag-cloud-tags"><a href="/tags/C/" style="font-size: 30px; color: #0078e7">C++</a> <a href="/tags/Qt/" style="font-size: 12px; color: #999">Qt</a> <a href="/tags/%E4%B8%BB%E5%B9%B2%E7%BD%91%E7%BB%9C/" style="font-size: 12px; color: #999">主干网络</a> <a href="/tags/%E5%9B%BE%E5%83%8F%E5%A2%9E%E5%BC%BA/" style="font-size: 12px; color: #999">图像增强</a> <a href="/tags/%E6%95%B0%E5%AD%A6/" style="font-size: 12px; color: #999">数学</a> <a href="/tags/%E8%AE%BA%E6%96%87/" style="font-size: 12px; color: #999">论文</a> <a href="/tags/%E9%9A%8F%E7%AC%94/" style="font-size: 12px; color: #999">随笔</a></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="hty-card post-block" itemscope itemtype="https://schema.org/Article"><link itemprop="mainEntityOfPage" href="http://sunl1ght.github.io/2021/03/23/%E4%B8%80%E6%AC%A1%E6%80%A7%E5%86%85%E7%AA%A5%E9%95%9C%E7%9A%84%E4%B8%BB%E6%9C%BA%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="Gary Gu"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="人生自留地"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">一次性内窥镜的主机系统设计</h1><div class="post-meta"><div class="post-time" style="display:block"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-line"></use></svg></span> <time title="Created: 2021-03-23 18:56:42" itemprop="dateCreated datePublished" datetime="2021-03-23T18:56:42+00:00">2021-03-23</time><span class="post-meta-divider">-</span><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-2-line"></use></svg></span> <time title="Modified: 2021-03-30 06:31:27" itemprop="dateModified" datetime="2021-03-30T06:31:27+00:00">2021-03-30</time></div><span class="post-count"><span class="post-symbolcount"><span class="post-meta-item-icon" title="Word count in article"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-file-word-line"></use></svg></span> <span title="Word count in article">2.7k</span><span class="post-meta-divider">-</span><span class="post-meta-item-icon" title="Reading time"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-timer-line"></use></svg></span> <span title="Reading time">10m</span></span></span><div class="post-classify"><span class="post-category"> <span class="post-meta-item-icon" style="margin-right:3px;"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-line"></use></svg></span><span itemprop="about" itemscope itemtype="https://schema.org/Thing"><a class="category" href="/categories/%E5%AE%9E%E9%AA%8C%E5%AE%A4/" style="--text-color:var(--hty-text-color)" itemprop="url" rel="index"><span itemprop="text">实验室</span></a></span></span><span class="post-tag"><span class="post-meta-divider">-</span><a class="tag" href="/tags/%E5%9B%BE%E5%83%8F%E5%A2%9E%E5%BC%BA/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">图像增强</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body" style="--smc-primary:#0078E7;"><h2 id="功能需求"><a href="#功能需求" class="headerlink" title="功能需求"></a>功能需求</h2><ol>
+<li>白平衡</li>
+<li>色彩增强（红色血管、出血点颜色增强）</li>
+<li>结构增强（显示细微轮廓）</li>
+<li>录像/拍照</li>
+<li>菜单：语言、存储格式、患者信息、增强功能设定、日期时间、视频输出格式、U盘格式化</li>
+<li>照明亮度调节功能（控制镜头端LED亮度）</li>
+<li>上下左右控制</li>
+</ol>
+<h2 id="内窥镜阶段计划书"><a href="#内窥镜阶段计划书" class="headerlink" title="内窥镜阶段计划书"></a>内窥镜阶段计划书</h2><h3 id="第一阶段"><a href="#第一阶段" class="headerlink" title="第一阶段"></a>第一阶段</h3><p><strong><center>图像处理</center></strong></p>
+<ul>
+<li>图像增强：<ul>
+<li>白平衡，</li>
+<li>颜色增强，</li>
+<li>结构增强</li>
+</ul>
+</li>
+</ul>
+<p><strong><center>界面设计</center></strong></p>
+<ul>
+<li>显示日期时间</li>
+<li>调用摄像头/读取视频</li>
+<li>视频输出格式选择</li>
+<li>图像显示</li>
+<li>图像增强若干功能按键</li>
+<li>U盘格式化按键</li>
+<li>界面显示语言切换（中/英）</li>
+</ul>
+<h3 id="第二阶段"><a href="#第二阶段" class="headerlink" title="第二阶段"></a>第二阶段</h3><p>软件</p>
+<ul>
+<li>引入神经网络中的超分辨率技术，完善结构增强功能</li>
+</ul>
+<p>硬件</p>
+<ul>
+<li>基于树莓派的软件控制，实现独立按钮控制</li>
+<li>三档控制LED的亮度</li>
+<li>多端通信及数据传输——显示器（HDMI）、PC端（TCP/IP）</li>
+</ul>
+<h2 id="实际实现——图像增强"><a href="#实际实现——图像增强" class="headerlink" title="实际实现——图像增强"></a>实际实现——图像增强</h2><details>
+<summary>图像增强综述</summary>
+
+<p>代码实现：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/fydeblog/p/10734733.html">https://www.cnblogs.com/fydeblog/p/10734733.html</a></p>
+<ul>
+<li>Point Operations<ul>
+<li>Image Negative</li>
+<li>Contrast Stretching</li>
+<li>Compression of dynamic range</li>
+<li>Grey level slicing</li>
+<li>Image Subtraction</li>
+<li>Image Averaging</li>
+<li>Histogram<ul>
+<li>Histogram Equalization</li>
+<li>adaptive histogram equalization</li>
+<li>Contrast Limited Adaptive Hitogram Equalization（CLAHE）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Mask Operations<ul>
+<li>Smoothing operations</li>
+<li>Median Filtering</li>
+<li>sharpening operations</li>
+<li>Derivative operations</li>
+</ul>
+</li>
+<li>Transform operations<ul>
+<li>Low pass filtering</li>
+<li>High pass filtering</li>
+<li>Band pass filtering</li>
+<li>Homomorphic filtering</li>
+</ul>
+</li>
+<li>Coloring Operations<ul>
+<li>False coloring</li>
+<li>Full color processing</li>
+</ul>
+</li>
+<li>Retinex<ul>
+<li>SSR</li>
+<li>MSR</li>
+<li>MSRCR</li>
+<li>Experiment</li>
+</ul>
+</li>
+<li>Dark Channel Prior</li>
+</ul>
+</details>
+
+<h2 id="实际实现——超分辨率"><a href="#实际实现——超分辨率" class="headerlink" title="实际实现——超分辨率"></a>实际实现——超分辨率</h2><p>为什么要使用超分辨算法？<br>通常情况，图像传感器均能获得较好的质量，但在特殊场合，受到诸多因素影响，导致图像质量下降。如图像采集获取过程中：<strong>成像环境、成像距离、传感器形状和大小、光学系统的误差、空气扰动、物体运动、镜头散焦的影响。</strong></p>
+<p>图像数字化处理过程中：成像、转换、编码、压缩、存储都会影响到图像的分辨率。另外<strong>，还有成像噪声、电气噪声、系统噪声的叠加</strong>。所以实际应用中，无法按照理想状况实现，存在的这些因素，必然影响图像的质量，获得较高质量的图像分辨率也是相当困难的。理论上，获得高分辨率只要增加成像系统的个数，最直接的方法是，通过传感器制造技术减小像素尺寸，增加单位面积的成像点阵就可以解决问题。</p>
+<p>综上，由于技术水平和经济条件的限制，使得成像传感器和光学器件的性能指标可能无法满足应用的需要，因此，需要采用信号处理方法提高图像分辨率。</p>
+<p><strong>经典的图像插值算法：</strong></p>
+<ul>
+<li>nearest（邻域像素重复技术）——放大像素大小但不增加细节，会简单地用与其最近邻相同的颜色填充空白像素。它虽然简单而有效，但结果是一个锯齿状、明显像素化的图像。</li>
+</ul>
+<p><img src="https://cdn.jsdelivr.net/gh/SunL1GHT/ImagePicGo@main/img/20210326185216.jpg" alt="nearest原理" loading="lazy"></p>
+<ul>
+<li>bilinear（双线性图像插值）——相似三角形原理，均值插值，以周围四个点来得到中间点的值，解决锯齿，但会产生模糊。基于最近的两个像素来分析空白像素，并在它们之间生成一个梯度，这会让图像变得更加清晰。</li>
+</ul>
+<p><img src="https://cdn.jsdelivr.net/gh/SunL1GHT/ImagePicGo@main/img/20210326185317.jpg" alt="bilinear原理" loading="lazy"></p>
+<ul>
+<li>bicubic（双三次图像插值），对其16个最近邻像素进行了采样，这样就会让着色变得精确，但仍然存在图像模糊的问题，R. G. Keys, “Cubic convolution interpolation for digital image processing,” IEEE Trans. On Acoustics, Speech, and Signal Processing, ASSP-29(6): 1153-1160, 1981.</li>
+</ul>
+<p>![插值算法对比](<a target="_blank" rel="noopener" href="https://mmbiz.qpic.cn/mmbiz_png/YicUhk5aAGtCfK7n1ltJhKRFKFcyL3syI8TmXdMJtATxKiarYmFLVcacDQhb9Aiapumj29TTPBg4W2sicSQDuUEwzg/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1%5D">https://mmbiz.qpic.cn/mmbiz_png/YicUhk5aAGtCfK7n1ltJhKRFKFcyL3syI8TmXdMJtATxKiarYmFLVcacDQhb9Aiapumj29TTPBg4W2sicSQDuUEwzg/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1]</a></p>
+<p>$$ g(x)=\sum\limits_k{c_k \cdot u(\frac {x-x_k}{h})} $$</p>
+<p>$$ u(s)=\begin{cases} {A_1}{|s|^3}+{B_1}{|s|^2}+{C_1}{|s|}+{D_1} &amp; 0&lt;|s|&lt;1 \\ {A_2}{|s|^3}+{B_2}{|s|^2}+{C_2}{|s|}+{D_2} &amp; 1&lt;|s|&lt;2 \\ 0 &amp; 2&lt;{|s|} \end{cases} $$</p>
+<p>将u(0)=1,u(1)=0,u(2)=0;s=0,1,2处u’连续A_2=0.5代入上式可得：</p>
+<p>$$ u(s)=\begin{cases} \frac {3}{2}{|s|^3}-\frac {5}{2}{|s|^2}+1 &amp; 0&lt;|s|&lt;1 \\ -\frac {1}{2}{|s|^3}+\frac {5}{2}{|s|^2}-4{|s|}+2 &amp; 1&lt;|s|&lt;2 \\ 0 &amp; 2&lt;{|s|} \end{cases} $$</p>
+<ul>
+<li>边缘导向差值法——假设自然图像可以用局部的高斯随机过程来描述，基于几何对偶性算出协方差系数使得LR→HR。图片给更光滑，速度快。</li>
+</ul>
+<p>$$ \vec{\alpha}=(C^TC)^{-1}\cdot(C^{T}\vec{y}) $$</p>
+<ul>
+<li><p>in scale BP——单幅图的超分辨率：自相似性（图像内部自相似性以及不同尺寸的自相似性）</p>
+<ul>
+<li><p>in-scale：在图像内部搜索相似块，根据相似块计算平均值，放入放大的图像的对应位置</p>
+</li>
+<li><p>cross-scale：在不同尺寸（高斯金字塔）图像间搜索相似块，根据相似块计算平均值，放入放大的图像的对应位置</p>
+</li>
+</ul>
+</li>
+<li><p>Superresolution，【ICCV2009】D. Glasner, S. Bagon, and M. Irani, “Super-resolution from a single image,” In Proc. of ICCV, 2009.  </p>
+<ul>
+<li>back-Projection：缩小高分辨率图像与实际图像之间的误差</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://cdn.jsdelivr.net/gh/SunL1GHT/ImagePicGo@main/img/20210326184457.jpg" alt="处理流程" loading="lazy"></p>
+<p>传统的基于插值的算法相比之下，神经网络的优势可以处理更多的信息，超分辨率算法可以分为以下两种：</p>
+<ol>
+<li><p>Single Image SR。只参考当前低分辨率图像，不依赖其他相关图像的超分辨率技术，称之为单幅图像的超分辨率（single image super resolution，SISR）。</p>
+</li>
+<li><p>Video SR。参考多幅图像或多个视频帧的超分辨率技术，称之为多帧视频/多图的超分辨率（multi-frame super resolution）。对于Video SR，其核心思想就是用时间带宽换取空间分辨率。简单来讲，就是在无法得到一张超高分辨率的图像时，可以多取相邻几帧，然后将这一系列低分辨率的图像组成一张高分辨的图像。</p>
+</li>
+</ol>
+<p>一般来讲Video SR相比于Image SR具有更多的可参考信息，并具有更好的高分辨率视频图像的重建质量，但是其更高的计算复杂度也限制了其应用。</p>
+<p>通常包括两个步骤：首先<strong>图像配准</strong>，即估计低分辨率图像之间亚像素级别的相对位移；其次<strong>图像融合</strong>，将多幅低分辨率图像融合成一幅高分辨率图像。</p>
+<p><strong>分类</strong></p>
+<p><strong><center>基于重建的方法</center></strong><br>通常都是基于多帧图像的，需要结合先验知识。有如下方法：</p>
+<ul>
+<li>凸集投影法（POCS)</li>
+<li>贝叶斯分析方法</li>
+<li>迭代反投影法（IBP）</li>
+<li>最大后验概率方法</li>
+<li>正规化法</li>
+<li>混合方法</li>
+</ul>
+<p><strong><center>基于学习的图像超分辨率</center></strong><br>机器学习领域（非深度学习邻域）的图像超分方法如下：</p>
+<ul>
+<li>Example-based方法</li>
+<li>邻域嵌入方法</li>
+<li>支持向量回归方法</li>
+<li>虚幻脸</li>
+<li>稀疏表示法</li>
+</ul>
+<p><strong><center>基于深度学习的图像超分辨率重建技术</center></strong><br>基于深度学习的图像超分辨率重建的研究流程如下：<br>1，首先找到一组原始图像Image1；<br>2，然后将这组图片降低分辨率为一组图像Image2；<br>3，通过各种神经网络结构，将Image2超分辨率重建为Image3（Image3和Image1分辨率一样）<br>4，通过PSNR等方法比较Image1与Image3，验证超分辨率重建的效果，根据效果调节神经网络中的节点模型和参数<br>5，反复执行，直到第四步比较的结果满意</p>
+<p><strong>简单试验几个超分辨率的<a target="_blank" rel="noopener" href="https://bbs.cvmart.net/topics/949">神经网络模型</a>：</strong></p>
+<p><img src="https://bbs.cvmart.net/uploads/images/201909/10/3/ExYpimih7z.png?imageView2/2/w/1240/h/0" alt="SRCNN" loading="lazy"></p>
+<details>
+<summary>SRCNN</summary>
+
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1pE411H7vd">SRCNN</a><br><a target="_blank" rel="noopener" href="https://moyangsensei.github.io/2020/07/18/%E8%AE%BA%E6%96%87%E7%A0%94%E8%AF%BB%EF%BC%9ASRCNN/#%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84">论文研读：SRCNN</a></p>
+</details>
+
+<p><img src="https://bbs.cvmart.net/uploads/images/201909/10/3/TqII1h1Uyi.png?imageView2/2/w/1240/h/0" alt="DRCN" loading="lazy"></p>
+<details>
+<summary>DRCN</summary>
+
+<p>提出使用更多的卷积层增加网络感受野（41x41），同时为了避免过多网络参数，该文章提出使用递归神经网络（RNN）。</p>
+</details>
+
+<p><img src="https://bbs.cvmart.net/uploads/images/201909/10/3/e7mc2ZJwJ7.png?imageView2/2/w/1240/h/0" alt="ESPCN" loading="lazy"></p>
+<details>
+<summary>ESPCN</summary>
+
+<p>在SRCNN和DRCN中，低分辨率图像都是先通过上采样插值得到与高分辨率图像同样的大小，再作为网络输入，意味着卷积操作在较高的分辨率上进行，相比于在低分辨率的图像上计算卷积，会降低效率。</p>
+</details>
+
+<p><img src="https://bbs.cvmart.net/uploads/images/201909/10/3/lcTwlTetVQ.png?imageView2/2/w/1240/h/0" alt="VESPCN" loading="lazy"></p>
+<details>
+<summary>VESPCN</summary>
+
+<p>在视频图像的SR问题中，相邻几帧具有很强的关联性，上述几种方法都只在单幅图像上进行处理，而VESPCN（ Real-Time Video Super-Resolution with Spatio-Temporal Networks and Motion Compensation, arxiv 2016）提出使用视频中的时间序列图像进行高分辨率重建，并且能达到实时处理的效率要求。</p>
+</details>
+
+<p><img src="https://bbs.cvmart.net/uploads/images/201909/10/3/L6AKms1aX0.png?imageView2/2/w/1240/h/0" alt="SRGAN" loading="lazy"></p>
+<details>
+<summary>SRGAN</summary>
+
+<p>其出发点是传统的方法一般处理的是较小的放大倍数，当图像的放大倍数在4以上时，很容易使得到的结果显得过于平滑，而缺少一些细节上的真实感。因此SRGAN使用GAN来生成图像中的细节。</p>
+<p>对抗学习的概念就是引入一个判别器来解决不同数据域之间分布不一致的问题，通过使判别器无法区分两个不同域的数据，间接使它们属于同一个分布，从而作为一个规则化的方法去指导深度学习模型更新参数，达到更好的效果。<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/25201511">参考</a></p>
+</details>
+
+<p><img src="https://img2020.cnblogs.com/blog/2215171/202103/2215171-20210301091709616-1699615147.png" alt="Unfolding SuperResolution Network(USRNet) " loading="lazy"></p>
+<details>
+<summary>USRNet</summary>
+
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/froml77/p/14453391.html">Deep Unfolding Network for Image Super-Resolution (USRNet)论文解读</a></p>
+<p>model-based：将问题公式化，然后通过不断迭代结果，最终得到一个令人较为满意的解</p>
+<p>learning-based：深度学习的方法</p>
+<p>「单图像超分」《Deep Unfolding Network for Image Super-Resolution》</p>
+<p>no-blind已知LR图像，下采样方法，模糊核，噪声的情况下，求对应的HR图像。</p>
+</details>
+
+
+<h2 id="实际实现——Qt界面"><a href="#实际实现——Qt界面" class="headerlink" title="实际实现——Qt界面"></a>实际实现——Qt界面</h2><p><strong>调用摄像头</strong></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/hjrf/fruit-recognition/blob/master/fruit-identification/%E8%B0%83%E7%94%A8%E7%94%B5%E8%84%91%E6%91%84%E5%83%8F%E5%A4%B4.cpp">https://github.com/hjrf/fruit-recognition/blob/master/fruit-identification/%E8%B0%83%E7%94%A8%E7%94%B5%E8%84%91%E6%91%84%E5%83%8F%E5%A4%B4.cpp</a></p>
+<p><strong>功能按键</strong></p>
+<h2 id="实际实现——云服务器进行训练部署"><a href="#实际实现——云服务器进行训练部署" class="headerlink" title="实际实现——云服务器进行训练部署"></a>实际实现——云服务器进行训练部署</h2><h3 id="Docker"><a href="#Docker" class="headerlink" title="Docker"></a>Docker</h3><p>Docker 是一个开放源代码软件，是一个开放平台，用于开发应用、交付（shipping）应用、运行应用。 Docker允许用户将基础设施（Infrastructure）中的应用单独分割出来，形成更小的颗粒（容器），从而提高交付软件的速度。</p>
+<p>Docker容器与虚拟机类似，但二者在原理上不同。容器是将操作系统层虚拟化，虚拟机则是虚拟化硬件，因此容器更具有便携性、高效地利用服务器。 容器更多的用于表示 软件的一个标准化单元。由于容器的标准化，因此它可以无视基础设施（Infrastructure）的差异，部署到任何一个地方。另外，Docker也为容器提供更强的业界的隔离兼容。</p>
+<p>参考<br>[1]: <a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_42535423/article/details/114303505">超分辨率重建基础知识总结</a><br>[2]: <a target="_blank" rel="noopener" href="https://moyangsensei.github.io/2020/07/18/%E5%9F%BA%E7%A1%80%EF%BC%9A%E5%9B%BE%E5%83%8F%E8%B6%85%E5%88%86%E8%BE%A8%E7%8E%87/">基础：图像超分辨率</a><br>[3]: <a target="_blank" rel="noopener" href="https://blog.csdn.net/liangchunjiang/article/details/79030681">CNN详解</a></p>
+</div><ul class="post-copyright"><li class="post-copyright-author"><strong>Post author: </strong>Gary Gu</li><li class="post-copyright-link"><strong>Post link: </strong><a href="http://sunl1ght.github.io/2021/03/23/%E4%B8%80%E6%AC%A1%E6%80%A7%E5%86%85%E7%AA%A5%E9%95%9C%E7%9A%84%E4%B8%BB%E6%9C%BA%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" title="一次性内窥镜的主机系统设计">http://sunl1ght.github.io/2021/03/23/%E4%B8%80%E6%AC%A1%E6%80%A7%E5%86%85%E7%AA%A5%E9%95%9C%E7%9A%84%E4%B8%BB%E6%9C%BA%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/</a></li><li class="post-copyright-license"><strong>Copyright Notice: </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><svg class="icon"><use xlink:href="#icon-creative-commons-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-by-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-nc-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-sa-line"></use></svg></a> unless otherwise stated.</li></ul></section></article><div class="post-nav"><div class="post-nav-item"><a class="post-nav-prev" href="/2021/03/23/Cplusplus/" rel="prev" title="C++实践记录"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-left-s-line"></use></svg><span class="post-nav-text">C++实践记录</span></a></div><div class="post-nav-item"><a class="post-nav-next" href="/2021/03/22/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="next" title="深度学习"><span class="post-nav-text">深度学习</span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-right-s-line"></use></svg></a></div></div></div><div class="hty-card" id="comment"><div class="comment-tooltip text-center"><span>要不要和我说些什么？</span><br></div></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2019 – 2021 </span><span class="with-love" id="animate"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-cloud-line"></use></svg></span><span class="author"> Gary Gu</span></div><div class="powered"><span>Powered by <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> v5.4.0</span><span class="footer-separator">|</span><span>Theme - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.5.2</span></div></footer><a class="hty-icon-button" id="goUp" aria-label="back-to-top" href="#"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-up-s-line"></use></svg><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a><script>const date = new Date();
+const today = (date.getMonth() + 1) + "-" + date.getDate()
+const mourn_days = ["5-12"]
+if (mourn_days.includes(today)) {
+  document.documentElement.style.filter = "grayscale(1)";
+}</script></div><!-- hexo injector body_end start --><script src="https://cdn.jsdelivr.net/npm/hexo-widget-tree@0.1.1/js/index.js"></script><div id="widget-tree">
+      <ul><li class="tree-list-item"><i class="toggle-post-icon gg-folder-add"></i><a class="tree-list-link" href="/categories/%E5%AE%9E%E9%AA%8C%E5%AE%A4/">实验室</a><ul class="tree-list-children"><li class="tree-list-item"><a class="tree-list-post-link" href="/2021/03/28/Qt%E5%AD%A6%E4%B9%A0%E5%AE%9E%E8%B7%B5/" title="Qt学习实践"><i class="post-icon gg-file-document"></i>Qt学习实践</a></li><li class="tree-list-item"><a class="tree-list-post-link" href="/2021/03/23/%E4%B8%80%E6%AC%A1%E6%80%A7%E5%86%85%E7%AA%A5%E9%95%9C%E7%9A%84%E4%B8%BB%E6%9C%BA%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" title="一次性内窥镜的主机系统设计"><i class="post-icon gg-file-document"></i>一次性内窥镜的主机系统设计</a></li><li class="tree-list-item"><a class="tree-list-post-link" href="/2021/03/22/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" title="深度学习"><i class="post-icon gg-file-document"></i>深度学习</a></li><li class="tree-list-item"><a class="tree-list-post-link" href="/2021/03/27/%E7%9F%A9%E9%98%B5%E6%B1%82%E5%AF%BC/" title="矩阵求导"><i class="post-icon gg-file-document"></i>矩阵求导</a></li></ul></li><li class="tree-list-item"><i class="toggle-post-icon gg-folder-add"></i><a class="tree-list-link" href="/categories/%E5%B7%A5%E4%BD%9C%E5%AE%9E%E8%B7%B5/">工作实践</a><ul class="tree-list-children"><li class="tree-list-item"><a class="tree-list-post-link" href="/2021/03/23/Cplusplus/" title="C++实践记录"><i class="post-icon gg-file-document"></i>C++实践记录</a></li></ul></li><li class="tree-list-item"><i class="toggle-post-icon gg-folder-add"></i><a class="tree-list-link" href="/categories/%E7%94%9F%E6%B4%BB%E5%B0%8F%E7%BB%93/">生活小结</a><ul class="tree-list-children"><li class="tree-list-item"><a class="tree-list-post-link" href="/2021/03/13/21march/" title="三月纪要"><i class="post-icon gg-file-document"></i>三月纪要</a></li></ul></li></ul>
+        <div id="widget-tree-button">
+          <i class="gg-chevron-right"></i>
+        </div>
+      </div><!-- hexo injector body_end end --></body></html>

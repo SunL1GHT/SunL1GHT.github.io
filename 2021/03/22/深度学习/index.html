@@ -1,0 +1,703 @@
+<!DOCTYPE html><html lang="en"><head><!-- hexo injector head_begin start --><link href="https://cdn.jsdelivr.net/npm/hexo-widget-tree@0.1.1/css/index.css" rel="stylesheet"/><!-- hexo injector head_begin end --><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="Gary Gu"><meta name="copyright" content="Gary Gu"><meta name="generator" content="Hexo 5.4.0"><meta name="theme" content="hexo-theme-yun"><title>深度学习 | 人生自留地</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/star-markdown-css@0.1.24/dist/yun/yun-markdown.min.css"><script src="//at.alicdn.com/t/font_1140697_ed8vp4atwoj.js" async></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>document.addEventListener("DOMContentLoaded", () => {
+  [".post-card",".post-content img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+});
+</script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/contrib/copy-tex.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@latest/dist/contrib/copy-tex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@latest/dist/contrib/auto-render.min.js"></script><script>document.addEventListener("DOMContentLoaded", function() {
+  renderMathInElement(document.body, {
+    delimiters: [
+      {left: "$$", right: "$$", display: true},
+      {left: "$", right: "$", display: false},
+      {left: "\\(", right: "\\)", display: false},
+      {left: "\\[", right: "\\]", display: true}
+    ]
+  });
+});</script><link rel="shortcut icon" type="image/svg+xml" href="/../images/favicon.ico"><link rel="mask-icon" href="/../images/favicon.ico" color="#0078E7"><link rel="alternate icon" href="/yun.ico"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="preload" href="/js/utils.js" as="script"><link rel="preload" href="/js/hexo-theme-yun.js" as="script"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><script id="yun-config">
+    const Yun = window.Yun || {};
+    window.CONFIG = {"hostname":"sunl1ght.github.io","root":"/","title":"海港浪声","version":"1.5.2","mode":"auto","copycode":true,"page":{"isPost":true},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}.","hits":"${hits} results found","hits_time":"${hits} results found in ${time} ms"},"anonymous_image":"https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/avatar/none.jpg","say":{"api":"/data/sentences.json"}};
+  </script><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script src="/js/utils.js"></script><script src="/js/hexo-theme-yun.js"></script><link rel="alternate" href="/atom.xml" title="人生自留地" type="application/atom+xml"><meta name="description" content="主干网络对比评估数据 1、top-1错误：如果模型预测的置信度最高的类与真正的类不相同，则会发生top-1错误。 2、top-5错误：当真正的类不在模型预测置信度最高的前5个类中时，会发生前top-5错误（按置信度排序）。  3、CPU的推断时间：推断时间是模型推理过程所花费的时间。 4、GPU的推断时间 : 当推理运行于gpu时，所花费的推理时间。   5、模型大小：这里的大小代表由PyTorc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深度学习">
+<meta property="og:url" content="http://sunl1ght.github.io/2021/03/22/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/index.html">
+<meta property="og:site_name" content="人生自留地">
+<meta property="og:description" content="主干网络对比评估数据 1、top-1错误：如果模型预测的置信度最高的类与真正的类不相同，则会发生top-1错误。 2、top-5错误：当真正的类不在模型预测置信度最高的前5个类中时，会发生前top-5错误（按置信度排序）。  3、CPU的推断时间：推断时间是模型推理过程所花费的时间。 4、GPU的推断时间 : 当推理运行于gpu时，所花费的推理时间。   5、模型大小：这里的大小代表由PyTorc">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cHM6Ly93d3cubGVhcm5vcGVuY3YuY29tL3dwLWNvbnRlbnQvdXBsb2Fkcy8yMDE5LzA2L0FjY3VyYWN5LUNvbXBhcmlzb24tb2YtTW9kZWxzLnBuZw?x-oss-process=image/format,png">
+<meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cHM6Ly93d3cubGVhcm5vcGVuY3YuY29tL3dwLWNvbnRlbnQvdXBsb2Fkcy8yMDE5LzA2L01vZGVsLUluZmVyZW5jZS1UaW1lLUNvbXBhcmlzb24tb24tQ1BVLW1zLUxvd2VyLWlzLWJldHRlci0ucG5n?x-oss-process=image/format,png">
+<meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cHM6Ly93d3cubGVhcm5vcGVuY3YuY29tL3dwLWNvbnRlbnQvdXBsb2Fkcy8yMDE5LzA2L01vZGVsLUluZmVyZW5jZS1UaW1lLUNvbXBhcmlzb24tb24tR1BVLW1zLUxvd2VyLWlzLWJldHRlci0ucG5n?x-oss-process=image/format,png">
+<meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cHM6Ly93d3cubGVhcm5vcGVuY3YuY29tL3dwLWNvbnRlbnQvdXBsb2Fkcy8yMDE5LzA2L01vZGVsLVNpemUtQ29tcGFyaXNvbi5wbmc?x-oss-process=image/format,png">
+<meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cHM6Ly93d3cubGVhcm5vcGVuY3YuY29tL3dwLWNvbnRlbnQvdXBsb2Fkcy8yMDE5LzA2L1ByZS1UcmFpbmVkLU1vZGVsLUNvbXBhcmlzb24ucG5n?x-oss-process=image/format,png">
+<meta property="article:published_time" content="2021-03-22T14:34:00.000Z">
+<meta property="article:modified_time" content="2021-03-30T06:31:27.220Z">
+<meta property="article:author" content="Gary Gu">
+<meta property="article:tag" content="主干网络">
+<meta property="article:tag" content="论文">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgconvert.csdnimg.cn/aHR0cHM6Ly93d3cubGVhcm5vcGVuY3YuY29tL3dwLWNvbnRlbnQvdXBsb2Fkcy8yMDE5LzA2L0FjY3VyYWN5LUNvbXBhcmlzb24tb2YtTW9kZWxzLnBuZw?x-oss-process=image/format,png"><script src="/js/ui/mode.js"></script></head><body><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="Table of Contents"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-ordered"></use></svg></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="Overview"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-passport-line"></use></svg></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info fix-top"><a class="site-author-avatar" href="/about/" title="Gary Gu"><img width="96" loading="lazy" src="/../images/penguin2-h.jpg" alt="Gary Gu"><span class="site-author-status" title="永远相信美好的事情即将发生">😊</span></a><div class="site-author-name"><a href="/about/">Gary Gu</a></div><a class="site-name" href="/about/site.html">人生自留地</a><sub class="site-subtitle"></sub><div class="site-desciption"></div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="Home"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item"><a href="/archives/" title="Archives"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">6</span></a></div><div class="site-state-item"><a href="/categories/" title="Categories"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-2-line"></use></svg></span><span class="site-state-item-count">3</span></a></div><div class="site-state-item"><a href="/tags/" title="Tags"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="site-state-item-count">7</span></a></div><a class="site-state-item hty-icon-button" href="/albums/" title="albums"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-gallery-line"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="/atom.xml" title="RSS" target="_blank" style="color:orange"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-rss-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/SunL1GHT" title="GitHub" target="_blank" style="color:#6e5494"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-github-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://weibo.com/3182176652" title="微博" target="_blank" style="color:#E6162D"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-weibo-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://www.douban.com/people/132851686/" title="豆瓣" target="_blank" style="color:#007722"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-douban-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://space.bilibili.com/66248455" title="哔哩哔哩" target="_blank" style="color:#FF8EB3"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-bilibili-line"></use></svg></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-contrast-2-line"></use></svg></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E5%B9%B2%E7%BD%91%E7%BB%9C%E5%AF%B9%E6%AF%94"><span class="toc-number">1.</span> <span class="toc-text">主干网络对比</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Benchmark"><span class="toc-number">1.1.</span> <span class="toc-text">Benchmark</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#torchvision"><span class="toc-number">1.1.1.</span> <span class="toc-text">torchvision</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Cadene-pretrained-models-pytorch"><span class="toc-number">1.1.2.</span> <span class="toc-text">Cadene&#x2F;pretrained-models.pytorch</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B6%88%E8%9E%8D%E5%AE%9E%E9%AA%8C"><span class="toc-number">1.2.</span> <span class="toc-text">消融实验</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%B6%E5%9B%8A%E5%AD%A6%E4%B9%A0"><span class="toc-number">2.</span> <span class="toc-text">胶囊学习</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%BE%E5%83%8F%E8%B6%85%E5%88%86%E8%BE%A8"><span class="toc-number">3.</span> <span class="toc-text">图像超分辨</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%BE%E5%83%8F%E8%B4%A8%E9%87%8F%E8%AF%84%E4%BC%B0"><span class="toc-number">3.1.</span> <span class="toc-text">图像质量评估</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AB%AF%E5%88%B0%E7%AB%AF%E5%AD%A6%E4%B9%A0"><span class="toc-number">3.2.</span> <span class="toc-text">端到端学习</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#USRNet"><span class="toc-number">3.2.1.</span> <span class="toc-text">USRNet</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%AF%E8%A7%86%E5%8C%96%E5%B7%A5%E5%85%B7"><span class="toc-number">4.</span> <span class="toc-text">可视化工具</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B%E7%BB%93%E6%9E%84%E5%8F%AF%E8%A7%86%E5%8C%96"><span class="toc-number">4.1.</span> <span class="toc-text">模型结构可视化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pytorch%E8%AE%AD%E7%BB%83%E8%BF%87%E7%A8%8B%E5%8F%AF%E8%A7%86%E5%8C%96"><span class="toc-number">4.2.</span> <span class="toc-text">Pytorch训练过程可视化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CNN%E8%AE%AD%E7%BB%83%E5%9B%BE%E7%89%87%E5%8F%AF%E8%A7%86%E5%8C%96"><span class="toc-number">4.3.</span> <span class="toc-text">CNN训练图片可视化</span></a></li></ol></li></ol></div></div></div><div class="tag-cloud"><div class="tag-cloud-tags"><a href="/tags/C/" style="font-size: 30px; color: #0078e7">C++</a> <a href="/tags/Qt/" style="font-size: 12px; color: #999">Qt</a> <a href="/tags/%E4%B8%BB%E5%B9%B2%E7%BD%91%E7%BB%9C/" style="font-size: 12px; color: #999">主干网络</a> <a href="/tags/%E5%9B%BE%E5%83%8F%E5%A2%9E%E5%BC%BA/" style="font-size: 12px; color: #999">图像增强</a> <a href="/tags/%E6%95%B0%E5%AD%A6/" style="font-size: 12px; color: #999">数学</a> <a href="/tags/%E8%AE%BA%E6%96%87/" style="font-size: 12px; color: #999">论文</a> <a href="/tags/%E9%9A%8F%E7%AC%94/" style="font-size: 12px; color: #999">随笔</a></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="hty-card post-block" itemscope itemtype="https://schema.org/Article"><link itemprop="mainEntityOfPage" href="http://sunl1ght.github.io/2021/03/22/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="Gary Gu"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="人生自留地"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">深度学习</h1><div class="post-meta"><div class="post-time" style="display:block"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-line"></use></svg></span> <time title="Created: 2021-03-22 14:34:00" itemprop="dateCreated datePublished" datetime="2021-03-22T14:34:00+00:00">2021-03-22</time><span class="post-meta-divider">-</span><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-2-line"></use></svg></span> <time title="Modified: 2021-03-30 06:31:27" itemprop="dateModified" datetime="2021-03-30T06:31:27+00:00">2021-03-30</time></div><span class="post-count"><span class="post-symbolcount"><span class="post-meta-item-icon" title="Word count in article"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-file-word-line"></use></svg></span> <span title="Word count in article">1.6k</span><span class="post-meta-divider">-</span><span class="post-meta-item-icon" title="Reading time"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-timer-line"></use></svg></span> <span title="Reading time">8m</span></span></span><div class="post-classify"><span class="post-category"> <span class="post-meta-item-icon" style="margin-right:3px;"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-line"></use></svg></span><span itemprop="about" itemscope itemtype="https://schema.org/Thing"><a class="category" href="/categories/%E5%AE%9E%E9%AA%8C%E5%AE%A4/" style="--text-color:var(--hty-text-color)" itemprop="url" rel="index"><span itemprop="text">实验室</span></a></span></span><span class="post-tag"><span class="post-meta-divider">-</span><a class="tag" href="/tags/%E4%B8%BB%E5%B9%B2%E7%BD%91%E7%BB%9C/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">主干网络</span></a><a class="tag" href="/tags/%E8%AE%BA%E6%96%87/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">论文</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body" style="--smc-primary:#0078E7;"><h2 id="主干网络对比"><a href="#主干网络对比" class="headerlink" title="主干网络对比"></a>主干网络对比</h2><p>评估数据</p>
+<p>1、<strong>top-1错误</strong>：如果模型预测的置信度最高的类与真正的类不相同，则会发生top-1错误。</p>
+<p>2、<strong>top-5错误</strong>：当真正的类不在模型预测置信度最高的前5个类中时，会发生前top-5错误（按置信度排序）。</p>
+<p><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly93d3cubGVhcm5vcGVuY3YuY29tL3dwLWNvbnRlbnQvdXBsb2Fkcy8yMDE5LzA2L0FjY3VyYWN5LUNvbXBhcmlzb24tb2YtTW9kZWxzLnBuZw?x-oss-process=image/format,png" alt="Accuracy Comparison of Models" loading="lazy"></p>
+<p>3、<strong>CPU的推断时间</strong>：推断时间是模型推理过程所花费的时间。</p>
+<p>4、<strong>GPU的推断时间</strong> : 当推理运行于gpu时，所花费的推理时间。</p>
+<p><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly93d3cubGVhcm5vcGVuY3YuY29tL3dwLWNvbnRlbnQvdXBsb2Fkcy8yMDE5LzA2L01vZGVsLUluZmVyZW5jZS1UaW1lLUNvbXBhcmlzb24tb24tQ1BVLW1zLUxvd2VyLWlzLWJldHRlci0ucG5n?x-oss-process=image/format,png" alt="Inference time on CPU comparison" loading="lazy"></p>
+<p><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly93d3cubGVhcm5vcGVuY3YuY29tL3dwLWNvbnRlbnQvdXBsb2Fkcy8yMDE5LzA2L01vZGVsLUluZmVyZW5jZS1UaW1lLUNvbXBhcmlzb24tb24tR1BVLW1zLUxvd2VyLWlzLWJldHRlci0ucG5n?x-oss-process=image/format,png" alt="Inference time on GPU comparison" loading="lazy"></p>
+<p>5、<strong>模型大小</strong>：这里的大小代表由PyTorch提供的预训练模型的.pth（或.pt) 文件所占用的物理空间。</p>
+<p><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly93d3cubGVhcm5vcGVuY3YuY29tL3dwLWNvbnRlbnQvdXBsb2Fkcy8yMDE5LzA2L01vZGVsLVNpemUtQ29tcGFyaXNvbi5wbmc?x-oss-process=image/format,png" alt="Model size comparison" loading="lazy">一个好的模型将具有低的TOP-1错误，低的TOP-5错误，低的CPU和GPU上的推理时间和低的模型大小。 所有的实验都是在同一个输入图像上进行的，并且多次进行，这样就可以将特定模型的所有结果的平均值进行分析。</p>
+<p><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly93d3cubGVhcm5vcGVuY3YuY29tL3dwLWNvbnRlbnQvdXBsb2Fkcy8yMDE5LzA2L1ByZS1UcmFpbmVkLU1vZGVsLUNvbXBhcmlzb24ucG5n?x-oss-process=image/format,png" alt="img" loading="lazy"></p>
+<p>CIFAR-10上Resnet18对比，超参数设置如下</p>
+<table>
+<thead>
+<tr>
+<th>EPOCH</th>
+<th>BATCH_SIZE</th>
+<th>LEARNING_RATE</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>135</td>
+<td>128</td>
+<td>0.01</td>
+</tr>
+</tbody></table>
+<p>EPOCH=103，best_acc= 92.190%</p>
+<p>EPOCH=102，best_acc= 91.950%</p>
+<p>EPOCH=132,best_acc= 92.430%（改进算法分类）</p>
+<p>基于机器视觉的模块化输电网的异物检测300~500</p>
+<p><strong>Datasets</strong>:[Oxford Flowers-102][1],102类，Size (train/test)：Size (train/test)</p>
+<table>
+<thead>
+<tr>
+<th>Network</th>
+<th>TOP-1 acc%</th>
+<th>TOP-5 acc%</th>
+<th>[FLOPs][2]</th>
+<th>Params.</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Resnet-50</td>
+<td></td>
+<td></td>
+<td></td>
+<td>23,705,252</td>
+</tr>
+<tr>
+<td>Efficientnet-b0</td>
+<td></td>
+<td></td>
+<td></td>
+<td>5,288,548</td>
+</tr>
+<tr>
+<td>Rexnet-1.0x</td>
+<td></td>
+<td></td>
+<td></td>
+<td>4,796,873</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><a href="CNN%E6%A8%A1%E5%9E%8B%E5%A4%8D%E6%9D%82%E5%BA%A6%EF%BC%88FLOPs%E3%80%81MAC%EF%BC%89%E3%80%81%E5%8F%82%E6%95%B0%E9%87%8F%E4%B8%8E%E8%BF%90%E8%A1%8C%E9%80%9F%E5%BA%A6_%E5%BC%A0%E9%B9%8F%E7%9A%84%E5%8D%9A%E5%AE%A2-CSDN%E5%8D%9A%E5%AE%A2(https://blog.csdn.net/weixin_39833897/article/details/105807172)"><strong>模型复杂度</strong></a></p>
+<p>描述一个具体的深度学习模型，除了性能指标（分类任务的准确度、检测任务的mAP等），还需要考虑该模型的复杂度，即参数(Parameters，使用Mb作为单位)的个数和（前向推理的）计算量（使用FLOPs（FLoating point OPerations）或MAC(Memory Access Cost)衡量）。</p>
+<p>前者描述了这个复杂的网络到底需要多少参数才能定义它，即存储该模型所需的存储空间。后者描述了数据过一遍这么复杂的网络需要多大的计算量呢，即使用该模型时所需的计算力。</p>
+</blockquote>
+<p>对于一个卷积层，假设其大小为$h×w×c×n$（其中c为#input channel, n为#output channel），输出的feature map尺寸为$H’×W’$，则该卷积层的</p>
+<p>$#paras = n×（h×w×c+1）$</p>
+<p>$ #FLOPs = H’×W’×N(H×W×C+1)，即FLOPs=H’×W’×#paras $</p>
+<h3 id="Benchmark"><a href="#Benchmark" class="headerlink" title="Benchmark"></a>Benchmark</h3><h4 id="torchvision"><a href="#torchvision" class="headerlink" title="torchvision"></a><a target="_blank" rel="noopener" href="https://pytorch.org/docs/1.0.0/torchvision/models.html">torchvision</a></h4><table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Input Resolution</th>
+<th>Params(M)</th>
+<th>MACs(G)</th>
+<th>Top-1 error</th>
+<th>Top-5 error</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>alexnet</td>
+<td>224x224</td>
+<td>61.1</td>
+<td>0.72</td>
+<td>43.45</td>
+<td>20.91</td>
+</tr>
+<tr>
+<td>vgg11</td>
+<td>224x224</td>
+<td>132.86</td>
+<td>7.63</td>
+<td>30.98</td>
+<td>11.37</td>
+</tr>
+<tr>
+<td>vgg13</td>
+<td>224x224</td>
+<td>133.05</td>
+<td>11.34</td>
+<td>30.07</td>
+<td>10.75</td>
+</tr>
+<tr>
+<td>vgg16</td>
+<td>224x224</td>
+<td>138.36</td>
+<td>15.5</td>
+<td>28.41</td>
+<td>9.62</td>
+</tr>
+<tr>
+<td>vgg19</td>
+<td>224x224</td>
+<td>143.67</td>
+<td>19.67</td>
+<td>27.62</td>
+<td>9.12</td>
+</tr>
+<tr>
+<td>vgg11_bn</td>
+<td>224x224</td>
+<td>132.87</td>
+<td>7.64</td>
+<td>29.62</td>
+<td>10.19</td>
+</tr>
+<tr>
+<td>vgg13_bn</td>
+<td>224x224</td>
+<td>133.05</td>
+<td>11.36</td>
+<td>28.45</td>
+<td>9.63</td>
+</tr>
+<tr>
+<td>vgg16_bn</td>
+<td>224x224</td>
+<td>138.37</td>
+<td>15.53</td>
+<td>26.63</td>
+<td>8.50</td>
+</tr>
+<tr>
+<td>vgg19_bn</td>
+<td>224x224</td>
+<td>143.68</td>
+<td>19.7</td>
+<td>25.76</td>
+<td>8.15</td>
+</tr>
+<tr>
+<td>resnet18</td>
+<td>224x224</td>
+<td>11.69</td>
+<td>1.82</td>
+<td>30.24</td>
+<td>10.92</td>
+</tr>
+<tr>
+<td>resnet34</td>
+<td>224x224</td>
+<td>21.8</td>
+<td>3.68</td>
+<td>26.70</td>
+<td>8.58</td>
+</tr>
+<tr>
+<td>resnet50</td>
+<td>224x224</td>
+<td>25.56</td>
+<td>4.12</td>
+<td>23.85</td>
+<td>7.13</td>
+</tr>
+<tr>
+<td>resnet101</td>
+<td>224x224</td>
+<td>44.55</td>
+<td>7.85</td>
+<td>22.63</td>
+<td>6.44</td>
+</tr>
+<tr>
+<td>resnet152</td>
+<td>224x224</td>
+<td>60.19</td>
+<td>11.58</td>
+<td>21.69</td>
+<td>5.94</td>
+</tr>
+<tr>
+<td>squeezenet1_0</td>
+<td>224x224</td>
+<td>1.25</td>
+<td>0.83</td>
+<td>41.90</td>
+<td>19.58</td>
+</tr>
+<tr>
+<td>squeezenet1_1</td>
+<td>224x224</td>
+<td>1.24</td>
+<td>0.36</td>
+<td>41.81</td>
+<td>19.38</td>
+</tr>
+<tr>
+<td>densenet121</td>
+<td>224x224</td>
+<td>7.98</td>
+<td>2.88</td>
+<td>25.35</td>
+<td>7.83</td>
+</tr>
+<tr>
+<td>densenet169</td>
+<td>224x224</td>
+<td>14.15</td>
+<td>3.42</td>
+<td>24.00</td>
+<td>7.00</td>
+</tr>
+<tr>
+<td>densenet201</td>
+<td>224x224</td>
+<td>20.01</td>
+<td>4.37</td>
+<td>22.80</td>
+<td>6.43</td>
+</tr>
+<tr>
+<td>densenet161</td>
+<td>224x224</td>
+<td>28.68</td>
+<td>7.82</td>
+<td>22.35</td>
+<td>6.20</td>
+</tr>
+<tr>
+<td>inception_v3</td>
+<td>224x224</td>
+<td>27.16</td>
+<td>2.85</td>
+<td>22.55</td>
+<td>6.44</td>
+</tr>
+</tbody></table>
+<ul>
+<li>Top-1 error - ImageNet single-crop top-1 error (224x224)</li>
+<li>Top-5 error - ImageNet single-crop top-5 error (224x224)</li>
+</ul>
+<h4 id="Cadene-pretrained-models-pytorch"><a href="#Cadene-pretrained-models-pytorch" class="headerlink" title="Cadene/pretrained-models.pytorch"></a><a target="_blank" rel="noopener" href="https://github.com/Cadene/pretrained-models.pytorch">Cadene/pretrained-models.pytorch</a></h4><table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Input Resolution</th>
+<th>Params(M)</th>
+<th>MACs(G)</th>
+<th>Acc@1</th>
+<th>Acc@5</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>alexnet</td>
+<td>224x224</td>
+<td>61.1</td>
+<td>0.72</td>
+<td>56.432</td>
+<td>79.194</td>
+</tr>
+<tr>
+<td>bninception</td>
+<td>224x224</td>
+<td>11.3</td>
+<td>2.05</td>
+<td>73.524</td>
+<td>91.562</td>
+</tr>
+<tr>
+<td>cafferesnet101</td>
+<td>224x224</td>
+<td>44.55</td>
+<td>7.62</td>
+<td>76.2</td>
+<td>92.766</td>
+</tr>
+<tr>
+<td>densenet121</td>
+<td>224x224</td>
+<td>7.98</td>
+<td>2.88</td>
+<td>74.646</td>
+<td>92.136</td>
+</tr>
+<tr>
+<td>densenet161</td>
+<td>224x224</td>
+<td>28.68</td>
+<td>7.82</td>
+<td>77.56</td>
+<td>93.798</td>
+</tr>
+<tr>
+<td>densenet169</td>
+<td>224x224</td>
+<td>14.15</td>
+<td>3.42</td>
+<td>76.026</td>
+<td>92.992</td>
+</tr>
+<tr>
+<td>densenet201</td>
+<td>224x224</td>
+<td>20.01</td>
+<td>4.37</td>
+<td>77.152</td>
+<td>93.548</td>
+</tr>
+<tr>
+<td>dpn107</td>
+<td>224x224</td>
+<td>86.92</td>
+<td>18.42</td>
+<td>79.746</td>
+<td>94.684</td>
+</tr>
+<tr>
+<td>dpn131</td>
+<td>224x224</td>
+<td>79.25</td>
+<td>16.13</td>
+<td>79.432</td>
+<td>94.574</td>
+</tr>
+<tr>
+<td>dpn68</td>
+<td>224x224</td>
+<td>12.61</td>
+<td>2.36</td>
+<td>75.868</td>
+<td>92.774</td>
+</tr>
+<tr>
+<td>dpn68b</td>
+<td>224x224</td>
+<td>12.61</td>
+<td>2.36</td>
+<td>77.034</td>
+<td>93.59</td>
+</tr>
+<tr>
+<td>dpn92</td>
+<td>224x224</td>
+<td>37.67</td>
+<td>6.56</td>
+<td>79.4</td>
+<td>94.62</td>
+</tr>
+<tr>
+<td>dpn98</td>
+<td>224x224</td>
+<td>61.57</td>
+<td>11.76</td>
+<td>79.224</td>
+<td>94.488</td>
+</tr>
+<tr>
+<td>fbresnet152</td>
+<td>224x224</td>
+<td>60.27</td>
+<td>11.6</td>
+<td>77.386</td>
+<td>93.594</td>
+</tr>
+<tr>
+<td>inceptionresnetv2</td>
+<td>299x299</td>
+<td>55.84</td>
+<td>13.22</td>
+<td>80.17</td>
+<td>95.234</td>
+</tr>
+<tr>
+<td>inceptionv3</td>
+<td>299x299</td>
+<td>27.16</td>
+<td>5.73</td>
+<td>77.294</td>
+<td>93.454</td>
+</tr>
+<tr>
+<td>inceptionv4</td>
+<td>299x299</td>
+<td>42.68</td>
+<td>12.31</td>
+<td>80.062</td>
+<td>94.926</td>
+</tr>
+<tr>
+<td>nasnetalarge</td>
+<td>331x331</td>
+<td>88.75</td>
+<td>24.04</td>
+<td>82.566</td>
+<td>96.086</td>
+</tr>
+<tr>
+<td>nasnetamobile</td>
+<td>224x224</td>
+<td>5.29</td>
+<td>0.59</td>
+<td>74.08</td>
+<td>91.74</td>
+</tr>
+<tr>
+<td>pnasnet5large</td>
+<td>331x331</td>
+<td>86.06</td>
+<td>25.21</td>
+<td>82.736</td>
+<td>95.992</td>
+</tr>
+<tr>
+<td>polynet</td>
+<td>331x331</td>
+<td>95.37</td>
+<td>34.9</td>
+<td>81.002</td>
+<td>95.624</td>
+</tr>
+<tr>
+<td>resnet101</td>
+<td>224x224</td>
+<td>44.55</td>
+<td>7.85</td>
+<td>77.438</td>
+<td>93.672</td>
+</tr>
+<tr>
+<td>resnet152</td>
+<td>224x224</td>
+<td>60.19</td>
+<td>11.58</td>
+<td>78.428</td>
+<td>94.11</td>
+</tr>
+<tr>
+<td>resnet18</td>
+<td>224x224</td>
+<td>11.69</td>
+<td>1.82</td>
+<td>70.142</td>
+<td>89.274</td>
+</tr>
+<tr>
+<td>resnet34</td>
+<td>224x224</td>
+<td>21.8</td>
+<td>3.68</td>
+<td>73.554</td>
+<td>91.456</td>
+</tr>
+<tr>
+<td>resnet50</td>
+<td>224x224</td>
+<td>25.56</td>
+<td>4.12</td>
+<td>76.002</td>
+<td>92.98</td>
+</tr>
+<tr>
+<td>resnext101_32x4d</td>
+<td>224x224</td>
+<td>44.18</td>
+<td>8.03</td>
+<td>78.188</td>
+<td>93.886</td>
+</tr>
+<tr>
+<td>resnext101_64x4d</td>
+<td>224x224</td>
+<td>83.46</td>
+<td>15.55</td>
+<td>78.956</td>
+<td>94.252</td>
+</tr>
+<tr>
+<td>se_resnet101</td>
+<td>224x224</td>
+<td>49.33</td>
+<td>7.63</td>
+<td>78.396</td>
+<td>94.258</td>
+</tr>
+<tr>
+<td>se_resnet152</td>
+<td>224x224</td>
+<td>66.82</td>
+<td>11.37</td>
+<td>78.658</td>
+<td>94.374</td>
+</tr>
+<tr>
+<td>se_resnet50</td>
+<td>224x224</td>
+<td>28.09</td>
+<td>3.9</td>
+<td>77.636</td>
+<td>93.752</td>
+</tr>
+<tr>
+<td>se_resnext101_32x4d</td>
+<td>224x224</td>
+<td>48.96</td>
+<td>8.05</td>
+<td>80.236</td>
+<td>95.028</td>
+</tr>
+<tr>
+<td>se_resnext50_32x4d</td>
+<td>224x224</td>
+<td>27.56</td>
+<td>4.28</td>
+<td>79.076</td>
+<td>94.434</td>
+</tr>
+<tr>
+<td>senet154</td>
+<td>224x224</td>
+<td>115.09</td>
+<td>20.82</td>
+<td>81.304</td>
+<td>95.498</td>
+</tr>
+<tr>
+<td>squeezenet1_0</td>
+<td>224x224</td>
+<td>1.25</td>
+<td>0.83</td>
+<td>58.108</td>
+<td>80.428</td>
+</tr>
+<tr>
+<td>squeezenet1_1</td>
+<td>224x224</td>
+<td>1.24</td>
+<td>0.36</td>
+<td>58.25</td>
+<td>80.8</td>
+</tr>
+<tr>
+<td>vgg11</td>
+<td>224x224</td>
+<td>132.86</td>
+<td>7.63</td>
+<td>68.97</td>
+<td>88.746</td>
+</tr>
+<tr>
+<td>vgg11_bn</td>
+<td>224x224</td>
+<td>132.87</td>
+<td>7.64</td>
+<td>70.452</td>
+<td>89.818</td>
+</tr>
+<tr>
+<td>vgg13</td>
+<td>224x224</td>
+<td>133.05</td>
+<td>11.34</td>
+<td>69.662</td>
+<td>89.264</td>
+</tr>
+<tr>
+<td>vgg13_bn</td>
+<td>224x224</td>
+<td>133.05</td>
+<td>11.36</td>
+<td>71.508</td>
+<td>90.494</td>
+</tr>
+<tr>
+<td>vgg16</td>
+<td>224x224</td>
+<td>138.36</td>
+<td>15.5</td>
+<td>71.636</td>
+<td>90.354</td>
+</tr>
+<tr>
+<td>vgg16_bn</td>
+<td>224x224</td>
+<td>138.37</td>
+<td>15.53</td>
+<td>73.518</td>
+<td>91.608</td>
+</tr>
+<tr>
+<td>vgg19</td>
+<td>224x224</td>
+<td>143.67</td>
+<td>19.67</td>
+<td>72.08</td>
+<td>90.822</td>
+</tr>
+<tr>
+<td>vgg19_bn</td>
+<td>224x224</td>
+<td>143.68</td>
+<td>19.7</td>
+<td>74.266</td>
+<td>92.066</td>
+</tr>
+<tr>
+<td>xception</td>
+<td>299x299</td>
+<td>22.86</td>
+<td>8.42</td>
+<td>78.888</td>
+<td>94.292</td>
+</tr>
+</tbody></table>
+<ul>
+<li>Acc@1 - ImageNet single-crop top-1 accuracy on validation images of the same size used during the training process.</li>
+<li>Acc@5 - ImageNet single-crop top-5 accuracy on validation images of the same size used during the training process.</li>
+</ul>
+<h3 id="消融实验"><a href="#消融实验" class="headerlink" title="消融实验"></a>消融实验</h3><h2 id="胶囊学习"><a href="#胶囊学习" class="headerlink" title="胶囊学习"></a>胶囊学习</h2><p><a target="_blank" rel="noopener" href="https://easyai.tech/ai-definition/capsule/">https://easyai.tech/ai-definition/capsule/</a></p>
+<h2 id="图像超分辨"><a href="#图像超分辨" class="headerlink" title="图像超分辨"></a>图像超分辨</h2><blockquote>
+<p>应用：模糊视频的实时处理</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/subeeshvasu/Awesome-Deblurring">https://github.com/subeeshvasu/Awesome-Deblurring</a></p>
+<h3 id="图像质量评估"><a href="#图像质量评估" class="headerlink" title="图像质量评估"></a>图像质量评估</h3><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/vincent2012/archive/2012/10/13/2723152.html">https://www.cnblogs.com/vincent2012/archive/2012/10/13/2723152.html</a></p>
+<ul>
+<li>PSNR，即峰值信噪比</li>
+</ul>
+<p>$$ PSNR=10\times\log{\frac {255^2}{MSE}} $$</p>
+<p>$$ MSE=\frac {\sum\limits_{n=1}^{\text{Framesize}}[(I^n-P^n)^2]} {\text{Framesize}} $$</p>
+<ul>
+<li>MSE：均方误差</li>
+<li>$I^n$：原始图像的第n个像素值</li>
+<li>$P^n$：处理后图像的第n个像素值</li>
+<li>Framesize：像素长*像素宽</li>
+</ul>
+<h3 id="端到端学习"><a href="#端到端学习" class="headerlink" title="端到端学习"></a>端到端学习</h3><p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1647850">https://cloud.tencent.com/developer/article/1647850</a></p>
+<h4 id="USRNet"><a href="#USRNet" class="headerlink" title="USRNet"></a><a target="_blank" rel="noopener" href="https://github.com/cszn/USRNet">USRNet</a></h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_37614597/article/details/114786923">https://blog.csdn.net/qq_37614597/article/details/114786923</a></p>
+<p><a target="_blank" rel="noopener" href="https://inf.news/zh-hans/technique/556625fbf1051cb48fbb97013b66ae9b.html">https://inf.news/zh-hans/technique/556625fbf1051cb48fbb97013b66ae9b.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/geopi1/Improved_USRNet">https://github.com/geopi1/Improved_USRNet</a></p>
+<h2 id="可视化工具"><a href="#可视化工具" class="headerlink" title="可视化工具"></a>可视化工具</h2><h3 id="模型结构可视化"><a href="#模型结构可视化" class="headerlink" title="模型结构可视化"></a>模型结构可视化</h3><p>Tensorboard</p>
+<h3 id="Pytorch训练过程可视化"><a href="#Pytorch训练过程可视化" class="headerlink" title="Pytorch训练过程可视化"></a>Pytorch训练过程可视化</h3><p> Visdom可视化</p>
+<h3 id="CNN训练图片可视化"><a href="#CNN训练图片可视化" class="headerlink" title="CNN训练图片可视化"></a>CNN训练图片可视化</h3><p>【教学使用——了解卷积内部操作过程】<a target="_blank" rel="noopener" href="https://poloclub.github.io/cnn-explainer/">https://poloclub.github.io/cnn-explainer/</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/taishan1994/pytorch-cnn-visualizations">taishan1994/pytorch-cnn-visualizations: Pytorch implementation of convolutional neural network visualization techniques (github.com)</a></p>
+<p>[1]:M.-E. Nilsback and A. Zisserman. Automated flower classification over a large number of classes. In 2008 Sixth Indian Conference on Computer Vision, Graphics &amp; Image Processing, pages 722–729. IEEE, 2008, <a target="_blank" rel="noopener" href="https://www.robots.ox.ac.uk/~vgg/data/flowers/102/">Visual Geometry Group - University of Oxford</a><br>[2]:FLOPS：floating point operations per second的缩写，意指每秒浮点运算次数，理解为计算速度。是一个衡量硬件性能的指标。</p>
+</div><ul class="post-copyright"><li class="post-copyright-author"><strong>Post author: </strong>Gary Gu</li><li class="post-copyright-link"><strong>Post link: </strong><a href="http://sunl1ght.github.io/2021/03/22/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" title="深度学习">http://sunl1ght.github.io/2021/03/22/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/</a></li><li class="post-copyright-license"><strong>Copyright Notice: </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><svg class="icon"><use xlink:href="#icon-creative-commons-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-by-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-nc-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-sa-line"></use></svg></a> unless otherwise stated.</li></ul></section></article><div class="post-nav"><div class="post-nav-item"><a class="post-nav-prev" href="/2021/03/23/%E4%B8%80%E6%AC%A1%E6%80%A7%E5%86%85%E7%AA%A5%E9%95%9C%E7%9A%84%E4%B8%BB%E6%9C%BA%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" rel="prev" title="一次性内窥镜的主机系统设计"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-left-s-line"></use></svg><span class="post-nav-text">一次性内窥镜的主机系统设计</span></a></div><div class="post-nav-item"><a class="post-nav-next" href="/2021/03/13/21march/" rel="next" title="三月纪要"><span class="post-nav-text">三月纪要</span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-right-s-line"></use></svg></a></div></div></div><div class="hty-card" id="comment"><div class="comment-tooltip text-center"><span>要不要和我说些什么？</span><br></div></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2019 – 2021 </span><span class="with-love" id="animate"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-cloud-line"></use></svg></span><span class="author"> Gary Gu</span></div><div class="powered"><span>Powered by <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> v5.4.0</span><span class="footer-separator">|</span><span>Theme - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.5.2</span></div></footer><a class="hty-icon-button" id="goUp" aria-label="back-to-top" href="#"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-up-s-line"></use></svg><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a><script>const date = new Date();
+const today = (date.getMonth() + 1) + "-" + date.getDate()
+const mourn_days = ["5-12"]
+if (mourn_days.includes(today)) {
+  document.documentElement.style.filter = "grayscale(1)";
+}</script></div><!-- hexo injector body_end start --><script src="https://cdn.jsdelivr.net/npm/hexo-widget-tree@0.1.1/js/index.js"></script><div id="widget-tree">
+      <ul><li class="tree-list-item"><i class="toggle-post-icon gg-folder-add"></i><a class="tree-list-link" href="/categories/%E5%AE%9E%E9%AA%8C%E5%AE%A4/">实验室</a><ul class="tree-list-children"><li class="tree-list-item"><a class="tree-list-post-link" href="/2021/03/28/Qt%E5%AD%A6%E4%B9%A0%E5%AE%9E%E8%B7%B5/" title="Qt学习实践"><i class="post-icon gg-file-document"></i>Qt学习实践</a></li><li class="tree-list-item"><a class="tree-list-post-link" href="/2021/03/23/%E4%B8%80%E6%AC%A1%E6%80%A7%E5%86%85%E7%AA%A5%E9%95%9C%E7%9A%84%E4%B8%BB%E6%9C%BA%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" title="一次性内窥镜的主机系统设计"><i class="post-icon gg-file-document"></i>一次性内窥镜的主机系统设计</a></li><li class="tree-list-item"><a class="tree-list-post-link" href="/2021/03/22/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" title="深度学习"><i class="post-icon gg-file-document"></i>深度学习</a></li><li class="tree-list-item"><a class="tree-list-post-link" href="/2021/03/27/%E7%9F%A9%E9%98%B5%E6%B1%82%E5%AF%BC/" title="矩阵求导"><i class="post-icon gg-file-document"></i>矩阵求导</a></li></ul></li><li class="tree-list-item"><i class="toggle-post-icon gg-folder-add"></i><a class="tree-list-link" href="/categories/%E5%B7%A5%E4%BD%9C%E5%AE%9E%E8%B7%B5/">工作实践</a><ul class="tree-list-children"><li class="tree-list-item"><a class="tree-list-post-link" href="/2021/03/23/Cplusplus/" title="C++实践记录"><i class="post-icon gg-file-document"></i>C++实践记录</a></li></ul></li><li class="tree-list-item"><i class="toggle-post-icon gg-folder-add"></i><a class="tree-list-link" href="/categories/%E7%94%9F%E6%B4%BB%E5%B0%8F%E7%BB%93/">生活小结</a><ul class="tree-list-children"><li class="tree-list-item"><a class="tree-list-post-link" href="/2021/03/13/21march/" title="三月纪要"><i class="post-icon gg-file-document"></i>三月纪要</a></li></ul></li></ul>
+        <div id="widget-tree-button">
+          <i class="gg-chevron-right"></i>
+        </div>
+      </div><!-- hexo injector body_end end --></body></html>
